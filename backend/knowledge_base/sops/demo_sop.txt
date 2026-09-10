@@ -1,0 +1,5 @@
+Synthetic Demo SOP
+SOP-MRPL-INS-04
+Section 4.3
+Pitting exceeding 1.5 mm requires engineering assessment.
+

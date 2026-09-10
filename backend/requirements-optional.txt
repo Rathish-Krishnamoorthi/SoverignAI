@@ -1,0 +1,5 @@
+# Install these on a machine prepared for local model inference/indexing.
+chromadb==0.5.23
+sentence-transformers==3.3.1
+paddleocr==2.9.1
+pymupdf==1.25.1
