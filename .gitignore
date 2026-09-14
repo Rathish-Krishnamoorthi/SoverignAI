@@ -123,6 +123,9 @@ uploads/
 uploaded_files/
 temp/
 tmp/
+backend/ocr_models/*
+!backend/ocr_models/.gitkeep
+.venv-ocr312/
 
 # ==============================
 # Secrets / Credentials

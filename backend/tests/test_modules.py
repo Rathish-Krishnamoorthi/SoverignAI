@@ -1,3 +1,4 @@
+from backend.modules.auth import current_user
 from backend.modules.evidence_chain import build_chain
 from backend.modules.llm import LocalLLM
 from backend.modules.verification import verify_threshold
@@ -42,3 +43,15 @@ def test_invalid_pdf_has_actionable_error(tmp_path):
         assert "valid, uncorrupted PDF" in str(exc)
     else:
         raise AssertionError("Invalid PDF should be rejected")
+
+
+def test_text_document_extraction(tmp_path):
+    path = tmp_path / "inspection.txt"
+    path.write_text("Equipment: Pump A-1\nFinding: Leak", encoding="utf-8")
+    document = extract_document(path, demo_mode=False)
+    assert document.pages[0].text == "Equipment: Pump A-1\nFinding: Leak"
+
+
+def test_demo_mode_allows_unauthenticated_uploads(monkeypatch):
+    monkeypatch.setenv("DEMO_MODE", "true")
+    assert current_user(None) == {"sub": "demo", "roles": ["ADMIN"]}

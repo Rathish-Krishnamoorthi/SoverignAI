@@ -1,0 +1,13 @@
+[
+  {
+    "document_id": "ffa561ba-279a-480c-9aa3-fd83e5626bbd",
+    "filename": "Engineering_Inspection_Report.pdf",
+    "size_bytes": 5576,
+    "uploaded_at": "2026-09-14T10:16:54.689302+00:00",
+    "analyzed": true,
+    "extraction_status": "success",
+    "extraction_message": "OCR and engineering field extraction completed successfully.",
+    "owner_id": "rock@gmail.com",
+    "project_id": null
+  }
+]

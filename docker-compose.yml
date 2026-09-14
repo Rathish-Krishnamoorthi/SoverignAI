@@ -1,15 +1,50 @@
 services:
   backend:
-    build: ./backend
-    ports: ["8001:8001"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     env_file: ./backend/.env.example
-    volumes:
-      - ./backend:/app/backend
+    environment:
+      DATABASE_URL: sqlite:////app/data/sovereign.db
+      MINIO_ENABLED: "false"
+      OLLAMA_BASE_URL: http://ollama:11434
+      DEMO_MODE: "false"
+      AIR_GAPPED_MODE: "true"
+    command: sh -c "alembic -c /app/alembic.ini upgrade head && uvicorn backend.main:app --host 0.0.0.0 --port 8001"
+    ports: ["127.0.0.1:8001:8001"]
+    volumes: [./data:/app/data]
+    depends_on:
+      ollama: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: sh -c "alembic -c /app/alembic.ini upgrade head && python -m backend.worker"
+    env_file: ./backend/.env.example
+    environment:
+      DATABASE_URL: sqlite:////app/data/sovereign.db
+    volumes: [./data:/app/data]
+    depends_on: [ollama]
   frontend:
     image: node:20-alpine
     working_dir: /app
-    volumes:
-      - ./frontend:/app
+    volumes: [./frontend:/app]
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-    ports: ["5173:5173"]
+    ports: ["127.0.0.1:5173:5173"]
     depends_on: [backend]
+  ollama:
+    image: ollama/ollama:latest
+    volumes: [ollama_data:/root/.ollama]
+    expose: ["11434"]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+volumes:
+  ollama_data:

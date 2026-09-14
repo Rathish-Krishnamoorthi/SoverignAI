@@ -12,6 +12,11 @@ def build_chain(
         "finding": f"{evidence.finding} at {evidence.equipment}",
         "inspection_evidence": evidence.model_dump(),
         "sop_evidence": sop.model_dump(),
-        "ai_analysis": analysis.model_dump(),
+        "ai_analysis": {
+            **analysis.model_dump(),
+            "provenance": {
+                "provider": "ollama", "execution": analysis.execution, "model": analysis.model,
+            },
+        },
         "calculation": calculation_data,
     }

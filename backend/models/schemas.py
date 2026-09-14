@@ -49,6 +49,7 @@ class EvidenceChain(BaseModel):
     sop_evidence: dict[str, Any]
     ai_analysis: dict[str, Any]
     calculation: dict[str, Any]
+    provenance: dict[str, Any] = Field(default_factory=dict)
 
 
 class DocumentPage(BaseModel):
@@ -71,7 +72,8 @@ class AnalysisResponse(BaseModel):
     calculation: CalculationVerification
     evidence_chain: EvidenceChain
     processing_mode: Literal["LOCAL", "DEMO"]
-    pipeline: list[dict[str, str]]
+    pipeline: list[dict[str, Any]]
+    provenance: dict[str, Any] = Field(default_factory=dict)
 
 
 class ReviewRequest(BaseModel):
@@ -86,3 +88,7 @@ class DocumentRecord(BaseModel):
     analyzed: bool = False
     extraction_status: Literal["pending", "success", "failed"] = "pending"
     extraction_message: str | None = None
+    # Populated by the production relational repository; optional for legacy
+    # demo JSON records created before project scoping existed.
+    owner_id: str | None = None
+    project_id: str | None = None
